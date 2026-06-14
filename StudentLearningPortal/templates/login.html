@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Student Learning Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="fas fa-sign-in-alt text-primary me-2"></i>Welcome Back
+                    </h2>
+                    <hr>
+                    
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username : </label>
+                            <input type="text" placeholder="Username...." class="form-control" id="username" name="username" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password : </label>
+                            <input type="password" placeholder="Password...." class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember">
+                            <label class="form-check-label" for="remember">
+                                Remember me
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <p class="text-center mb-0">
+                        Don't have an account? <a href="/register">Register here</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Demo Credentials -->
+            <div class="card bg-light mt-3 border-0">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="fas fa-info-circle text-info me-2"></i>Demo Credentials</h6>
+                    <p class="mb-1"><strong>Username:</strong> student1</p>
+                    <p class="mb-0"><strong>Password:</strong> password123</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="alertPlaceholder"></div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value
+    };
+    
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showAlert(data.message, 'success');
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 1500);
+        } else {
+            showAlert(data.message, 'danger');
+        }
+    } catch (error) {
+        showAlert('An error occurred. Please try again.', 'danger');
+    }
+});
+
+function showAlert(message, type) {
+    const alertPlaceholder = document.getElementById('alertPlaceholder');
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show m-3`;
+    alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    alertPlaceholder.appendChild(alert);
+}
+</script>
+{% endblock %}

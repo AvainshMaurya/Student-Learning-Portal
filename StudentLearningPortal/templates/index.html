@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Student Learning Portal{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5 text-center text-white">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">Welcome to Student Learning Portal</h1>
+        <p class="lead mb-4">Empowering students with quality education resources aligned with UN Sustainable Development Goal 4</p>
+        <div class="hero-buttons">
+            {% if session.user_id %}
+            <a href="/dashboard" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-th-large me-2"></i>Go to Dashboard
+            </a>
+            <a href="/quizzes" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-check-square me-2"></i>Take a Quiz
+            </a>
+            {% else %}
+            <a href="/register" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-user-plus me-2"></i>Get Started
+            </a>
+            <a href="/login" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i>Login
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- SDG 4 Section -->
+<section class="sdg-section py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img src="https://th.bing.com/th?id=OIF.2oTqiSAtu1sl%2fokod%2bTjtA&w=305&h=175&c=7&r=0&o=7&pid=1.7&rm=3" class="img-fluid rounded-lg" width="600" height="400" alt="SDG 4">
+            </div>
+
+            <div class="col-md-6">
+                <h2 class="mb-4">UN Sustainable Development Goal 4</h2>
+                <h4 class="text-primary mb-3">Ensure inclusive and equitable quality education</h4>
+                <p class="mb-3">
+                    <strong>Quality Education</strong> is the foundation for improving people's lives and sustainable development. 
+                    This platform is dedicated to achieving SDG 4 by:
+                </p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check-circle text-success me-2"></i>Providing free access to educational resources</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i>Offering comprehensive study materials and tutorials</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i>Enabling self-paced learning for all students</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i>Tracking learning progress and achievement</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Features</h2>
+        <div class="row">
+            <!-- Feature 1 -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Study Materials</h5>
+                        <p class="card-text">Access comprehensive study notes, PDFs, and educational resources organized by subject.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-video fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Video Learning</h5>
+                        <p class="card-text">Learn from high-quality video tutorials on various subjects and topics.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-square fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Online Quizzes</h5>
+                        <p class="card-text">Test your knowledge with interactive quizzes and get instant feedback on performance.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-line fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Progress Tracking</h5>
+                        <p class="card-text">Monitor your learning journey with detailed progress analytics and reports.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-certificate fa-3x text-danger mb-3"></i>
+                        <h5 class="card-title">Certificates</h5>
+                        <p class="card-text">Earn certificates upon successfully completing quizzes and assessments.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-mobile-alt fa-3x text-dark mb-3"></i>
+                        <h5 class="card-title">Responsive Design</h5>
+                        <p class="card-text">Access the portal seamlessly on desktop, tablet, and mobile devices.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to Start Learning?</h2>
+        <p class="lead mb-4">Join thousands of students accessing quality education</p>
+        {% if not session.user_id %}
+        <a href="/register" class="btn btn-light btn-lg">
+            <i class="fas fa-arrow-right me-2"></i>Register Now
+        </a>
+        {% else %}
+        <a href="/dashboard" class="btn btn-light btn-lg">
+            <i class="fas fa-arrow-right me-2"></i>Go to Dashboard
+        </a>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

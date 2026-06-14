@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Take Quiz - Student Learning Portal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Quiz Header -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h3 class="mb-2">{{ quiz.title }}</h3>
+                            <p class="text-muted mb-0">{{ quiz.description }}</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="timer" id="timer">
+                                <i class="fas fa-clock me-2"></i>
+                                <span id="timeDisplay">{{ quiz.time_limit }}:00</span>
+                            </div>
+                            <small class="text-muted d-block">Time Remaining</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Progress -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <small class="text-muted">
+                        Question <span id="currentQuestion">1</span> of {{ quiz.questions|length }}
+                    </small>
+                </div>
+            </div>
+
+            <!-- Quiz Container -->
+            <form id="quizForm">
+                {% for question in quiz.questions %}
+                <div class="quiz-question mb-4" id="question-{{ question.id }}" style="display: {% if loop.index == 1 %}block{% else %}none{% endif %};">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">
+                                <strong>Q{{ loop.index }}:</strong> {{ question.question_text }}
+                            </h5>
+
+                            <div class="options">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="question-{{ question.id }}" value="A" id="q{{ question.id }}_a" required>
+                                    <label class="form-check-label" for="q{{ question.id }}_a">
+                                        <strong>A.</strong> {{ question.option_a }}
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="question-{{ question.id }}" value="B" id="q{{ question.id }}_b" required>
+                                    <label class="form-check-label" for="q{{ question.id }}_b">
+                                        <strong>B.</strong> {{ question.option_b }}
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="question-{{ question.id }}" value="C" id="q{{ question.id }}_c" required>
+                                    <label class="form-check-label" for="q{{ question.id }}_c">
+                                        <strong>C.</strong> {{ question.option_c }}
+                                    </label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="question-{{ question.id }}" value="D" id="q{{ question.id }}_d" required>
+                                    <label class="form-check-label" for="q{{ question.id }}_d">
+                                        <strong>D.</strong> {{ question.option_d }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" {% if loop.index == 1 %}disabled{% endif %}>
+                            <i class="fas fa-arrow-left me-1"></i>Previous
+                        </button>
+
+                        <span class="text-muted align-self-center">
+                            Question {{ loop.index }} of {{ quiz.questions|length }}
+                        </span>
+
+                        {% if loop.index == quiz.questions|length %}
+                        <button type="submit" class="btn btn-success" onclick="submitQuiz()">
+                            <i class="fas fa-check me-1"></i>Submit Quiz
+                        </button>
+                        {% else %}
+                        <button type="button" class="btn btn-primary" onclick="nextQuestion()">
+                            Next <i class="fas fa-arrow-right ms-1"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <input type="hidden" id="quizId" value="{{ quiz.id }}">
+                <input type="hidden" id="timeTaken" value="0">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentQuestion = 1;
+const totalQuestions = {{ quiz.questions|length }};
+const timeLimit = {{ quiz.time_limit }} * 60; // Convert to seconds
+let timeRemaining = timeLimit;
+let startTime = Date.now();
+
+// Timer function
+function updateTimer() {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    timeRemaining = timeLimit - elapsed;
+    
+    if (timeRemaining <= 0) {
+        submitQuiz();
+        return;
+    }
+
+    const minutes = Math.floor(timeRemaining / 60);
+    const seconds = timeRemaining % 60;
+    document.getElementById('timeDisplay').textContent = 
+        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (timeRemaining < 60) {
+        document.getElementById('timer').classList.add('text-danger');
+    }
+}
+
+setInterval(updateTimer, 1000);
+
+function showQuestion(n) {
+    const questions = document.querySelectorAll('.quiz-question');
+    if (n > totalQuestions) {
+        n = totalQuestions;
+    }
+    if (n < 1) {
+        n = 1;
+    }
+
+    questions.forEach(q => q.style.display = 'none');
+    document.getElementById(`question-${getQuestionIds()[n-1]}`).style.display = 'block';
+
+    // Update progress bar
+    const progress = (n / totalQuestions) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+    document.getElementById('currentQuestion').textContent = n;
+
+    // Update button states
+    document.getElementById('prevBtn').disabled = n === 1;
+
+    currentQuestion = n;
+}
+
+function getQuestionIds() {
+    return [{% for question in quiz.questions %}{{ question.id }}{{ ',' if not loop.last }}{% endfor %}];
+}
+
+function nextQuestion() {
+    showQuestion(currentQuestion + 1);
+}
+
+function previousQuestion() {
+    showQuestion(currentQuestion - 1);
+}
+
+function submitQuiz() {
+    if (!confirm('Are you sure you want to submit the quiz? You cannot change your answers after submission.')) {
+        return;
+    }
+
+    const answers = {};
+    const questionIds = getQuestionIds();
+    
+    questionIds.forEach(qId => {
+        const selected = document.querySelector(`input[name="question-${qId}"]:checked`);
+        if (selected) {
+            answers[qId] = selected.value;
+        }
+    });
+
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+    fetch('/api/submit-quiz', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            quiz_id: {{ quiz.id }},
+            answers: answers,
+            time_taken: timeTaken
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = `/quiz-result/${data.result_id}`;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Initialize
+showQuestion(1);
+</script>
+{% endblock %}

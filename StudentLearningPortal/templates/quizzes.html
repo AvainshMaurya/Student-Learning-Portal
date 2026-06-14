@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Quizzes - Student Learning Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4"><i class="fas fa-check-square me-2 text-warning"></i>Online Quizzes</h2>
+
+    <!-- Filter Section -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <select class="form-select" id="subjectFilter">
+                <option value="">All Subjects</option>
+                {% for subject in subjects %}
+                <option value="{{ subject[0] }}" {% if subject[0] == current_subject %}selected{% endif %}>{{ subject[0] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Quizzes Grid -->
+    <div class="row">
+        {% if quizzes %}
+            {% for quiz in quizzes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card quiz-card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">{{ quiz.title }}</h5>
+                            <span class="badge bg-warning">{{ quiz.subject }}</span>
+                        </div>
+                        
+                        <p class="card-text text-muted small">{{ quiz.description }}</p>
+
+                        <div class="quiz-info mb-3">
+                            <p class="mb-1">
+                                <i class="fas fa-list me-2 text-info"></i>
+                                <strong>{{ quiz.total_questions }} Questions</strong>
+                            </p>
+                            <p class="mb-1">
+                                <i class="fas fa-clock me-2 text-info"></i>
+                                <strong>{{ quiz.time_limit }} minutes</strong>
+                            </p>
+                            <p class="mb-0">
+                                <i class="fas fa-check-circle me-2 text-info"></i>
+                                <strong>Pass: {{ quiz.passing_score }}%</strong>
+                            </p>
+                        </div>
+
+                        <div class="progress mb-3" style="height: 5px;">
+                            <div class="progress-bar" style="width: 100%"></div>
+                        </div>
+
+                        {% if session.user_id %}
+                        <a href="/quiz/{{ quiz.id }}" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-play me-1"></i>Start Quiz
+                        </a>
+                        {% else %}
+                        <a href="/login" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-login me-1"></i>Login to Take Quiz
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="col-md-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i>No quizzes found.
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.getElementById('subjectFilter').addEventListener('change', function() {
+    const subject = this.value;
+    const url = new URL(window.location);
+    if (subject) url.searchParams.set('subject', subject);
+    window.location = url.toString();
+});
+</script>
+{% endblock %}

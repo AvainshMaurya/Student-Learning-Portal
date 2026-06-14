@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Progress Tracking - Student Learning Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4"><i class="fas fa-chart-line me-2 text-info"></i>Your Learning Progress</h2>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card stat-card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p class="text-muted mb-1">Total Attempts</p>
+                            <h3>{{ total_attempts }}</h3>
+                        </div>
+                        <i class="fas fa-list fa-2x text-info opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card stat-card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p class="text-muted mb-1">Quizzes Passed</p>
+                            <h3>{{ total_passed }}</h3>
+                        </div>
+                        <i class="fas fa-check-circle fa-2x text-success opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card stat-card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p class="text-muted mb-1">Average Score</p>
+                            <h3>{{ avg_score }}%</h3>
+                        </div>
+                        <i class="fas fa-star fa-2x text-warning opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card stat-card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p class="text-muted mb-1">Pass Rate</p>
+                            <h3>{% if total_attempts > 0 %}{{ (total_passed / total_attempts * 100)|int }}%{% else %}0%{% endif %}</h3>
+                        </div>
+                        <i class="fas fa-percentage fa-2x text-primary opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Chart -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Score Trend</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="progressChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Results Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0"><i class="fas fa-table me-2"></i>Detailed Results</h5>
+                </div>
+                <div class="card-body">
+                    {% if results %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Quiz Title</th>
+                                    <th>Score</th>
+                                    <th>Percentage</th>
+                                    <th>Status</th>
+                                    <th>Time Taken</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in results %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ result.quiz.title }}</td>
+                                    <td>{{ result.score }}/{{ result.total_marks }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar {% if result.passed %}bg-success{% else %}bg-danger{% endif %}" 
+                                                 style="width: {{ result.percentage }}%"></div>
+                                        </div>
+                                        {{ result.percentage }}%
+                                    </td>
+                                    <td>
+                                        {% if result.passed %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Passed
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times me-1"></i>Failed
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% set minutes = result.time_taken // 60 %}
+                                        {% set seconds = result.time_taken % 60 %}
+                                        {{ minutes }}:{{ '%02d'|format(seconds) }}
+                                    </td>
+                                    <td>{{ result.completed_at.strftime('%d %b %Y') }}</td>
+                                    <td>
+                                        <a href="/quiz-result/{{ result.id }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-4">
+                        <i class="fas fa-inbox fa-3x mb-3"></i><br>
+                        No quiz attempts yet. <a href="/quizzes">Take your first quiz!</a>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+// Prepare data for chart
+const percentages = [{% for result in results %}{{ result.percentage }},{% endfor %}];
+const labels = [{% for result in results %}'{{ result.quiz.title[:15] }}',{% endfor %}];
+
+if (labels.length > 0) {
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Quiz Score (%)',
+                data: percentages,
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#0d6efd',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        suffix: '%'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

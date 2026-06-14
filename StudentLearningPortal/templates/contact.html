@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Student Learning Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5 w-75 mx-auto ">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4 text-center">
+                <i class="fas fa-envelope me-2 text-primary"></i>Contact & Feedback
+            </h2>
+
+            <p class="text-center text-muted mb-4">
+                Have questions, suggestions, or encountered a bug? We'd love to hear from you!
+            </p>
+            <hr>
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form id="contactForm">
+                        {% if not session.user_id %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name :</label>
+                            <input type="text" placeholder="Enter your Name..." class="form-control" id="name" name="name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Your Email :</label>
+                            <input type="email" placeholder="Enter your Email.." class="form-control" id="email" name="email" required>
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Feedback Category :</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="">Select a category</option>
+                                <option value="Bug">Bug Report</option>
+                                <option value="Suggestion">Suggestion</option>
+                                <option value="Question">Question</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject :</label>
+                            <input type="text" placeholder="Enter Your Subject.." class="form-control" id="subject" name="subject" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message :</label>
+                            <textarea class="form-control" placeholder="Enter Your Message..." id="message" name="message" rows="6" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Send Feedback
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="fas fa-envelope fa-2x text-primary mb-3"></i>
+                        <h6>Email</h6>
+                        <p class="text-muted">info@studentportal.com</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="fas fa-phone fa-2x text-primary mb-3"></i>
+                        <h6>Phone</h6>
+                        <p class="text-muted">+1 (555) 123-4567</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="fas fa-map-marker-alt fa-2x text-primary mb-3"></i>
+                        <h6>Address</h6>
+                        <p class="text-muted">123 Education Ave, Learning City</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="alertPlaceholder"></div>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value,
+        category: document.getElementById('category').value
+    };
+    
+    try {
+        const response = await fetch('/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showAlert(data.message, 'success');
+            document.getElementById('contactForm').reset();
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        } else {
+            showAlert(data.message, 'danger');
+        }
+    } catch (error) {
+        showAlert('An error occurred. Please try again.', 'danger');
+    }
+});
+
+function showAlert(message, type) {
+    const alertPlaceholder = document.getElementById('alertPlaceholder');
+    alertPlaceholder.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show m-3">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+}
+</script>
+{% endblock %}

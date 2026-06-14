@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Study Materials - Student Learning Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="mb-4"><i class="fas fa-book me-2 text-primary"></i>Study Materials</h2>
+
+            <!-- Search and Filter -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="searchMaterial" placeholder="Search materials...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat[0] }}" {% if cat[0] == current_category %}selected{% endif %}>{{ cat[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Materials Grid -->
+            <div class="row" id="materialsContainer">
+                {% if materials %}
+                    {% for material in materials %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card material-card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ material.title }}</h5>
+                                <p class="card-text text-muted">{{ material.description }}</p>
+                                
+                                <div class="mb-3">
+                                    <span class="badge bg-primary">{{ material.category }}</span>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-download me-1"></i>{{ material.downloads }} downloads
+                                    </small>
+                                    <div class="stars">
+                                        <i class="fas fa-star text-warning"></i> {{ material.rating }}
+                                    </div>
+                                </div>
+
+                                {% if session.user_id %}
+                                <a href="/api/download-material/{{ material.id }}" class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-download me-1"></i>Download
+                                </a>
+                                {% else %}
+                                <a href="/login" class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-login me-1"></i>Login to Download
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="col-md-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>No study materials found.
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('categoryFilter').addEventListener('change', function() {
+    const category = this.value;
+    const search = document.getElementById('searchMaterial').value;
+    const url = new URL(window.location);
+    if (category) url.searchParams.set('category', category);
+    if (search) url.searchParams.set('search', search);
+    window.location = url.toString();
+});
+
+document.getElementById('searchMaterial').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        const search = this.value;
+        const category = document.getElementById('categoryFilter').value;
+        const url = new URL(window.location);
+        if (search) url.searchParams.set('search', search);
+        if (category) url.searchParams.set('category', category);
+        window.location = url.toString();
+    }
+});
+</script>
+{% endblock %}

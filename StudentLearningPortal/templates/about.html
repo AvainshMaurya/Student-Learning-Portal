@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Student Learning Portal{% endblock %}
+
+{% block content %}
+<!-- About Hero -->
+<section class="bg-light py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="mb-4">About Student Learning Portal</h2>
+                <p class="lead mb-4">
+                    We are dedicated to making quality education accessible to every student across the globe.
+                </p>
+                <p class="mb-3">
+                    Student Learning Portal is built on the principles of UN Sustainable Development Goal 4 (SDG 4): 
+                    <strong>Quality Education</strong>. Our mission is to provide free, accessible, and comprehensive 
+                    educational resources to empower students in their learning journey.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <img src="https://th.bing.com/th/id/OIF.P3RaYnSyfZtQYUPeUymPig?w=291&h=180&c=7&r=0&o=7&pid=1.7&rm=3" width="650" height="380" class="img-fluid rounded-lg" alt="About Us">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission & Vision -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-bullseye fa-3x text-primary mb-3"></i>
+                        <h4 class="card-title">Our Mission</h4>
+                        <p class="card-text">
+                            To democratize education by providing free access to quality learning resources, 
+                            helping students achieve their academic goals and aspirations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <i class="fas fa-eye fa-3x text-success mb-3"></i>
+                        <h4 class="card-title">Our Vision</h4>
+                        <p class="card-text">
+                            To create a world where every student has equal access to quality education 
+                            and resources needed to succeed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Core Values</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                    <h5>Accessibility</h5>
+                    <p class="text-muted">Education should be free and accessible to all, regardless of background.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                    <h5>Excellence</h5>
+                    <p class="text-muted">We provide high-quality, curated educational content and resources.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-handshake fa-3x text-success mb-3"></i>
+                    <h5>Community</h5>
+                    <p class="text-muted">We believe in the power of learning together and supporting each other.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Team</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <img src="data:image/webp;base64,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" class="rounded-circle mb-3" alt="Team Member" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h5>Founder & CEO</h5>
+                    <p class="text-muted">Passionate about revolutionizing education</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <img src="https://th.bing.com/th/id/OIP.IGNf7GuQaCqz_RPq5wCkPgHaLH?w=184&h=276&c=7&r=0&o=7&pid=1.7&rm=3" class="rounded-circle mb-3" alt="Team Member" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h5>Lead Developer</h5>
+                    <p class="text-muted">Building technology for education</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <img src="https://th.bing.com/th/id/OIP.s5psFbn7HxDdAduX4SUAoQHaE8?w=184&h=123&c=7&r=0&o=7&pid=1.7&rm=3" class="rounded-circle mb-3" alt="Team Member" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h5>Content Manager</h5>
+                    <p class="text-muted">Curating quality educational content</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SDG 4 Commitment -->
+<section class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">UN SDG 4: Quality Education</h2>
+        <p class="lead mb-4">
+            We are committed to achieving the United Nations Sustainable Development Goal 4, 
+            which aims to "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all."
+        </p>
+        <div class="row mt-5">
+            <div class="col-md-3 mb-3">
+                <i class="fas fa-graduation-cap fa-3x mb-3"></i>
+                <h6>Quality Learning</h6>
+            </div>
+            <div class="col-md-3 mb-3">
+                <i class="fas fa-globe fa-3x mb-3"></i>
+                <h6>Global Access</h6>
+            </div>
+            <div class="col-md-3 mb-3">
+                <i class="fas fa-users fa-3x mb-3"></i>
+                <h6>Inclusive</h6>
+            </div>
+            <div class="col-md-3 mb-3">
+                <i class="fas fa-infinity fa-3x mb-3"></i>
+                <h6>Lifelong Learning</h6>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

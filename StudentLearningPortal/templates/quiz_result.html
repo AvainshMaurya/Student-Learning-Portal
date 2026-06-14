@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Result - Student Learning Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Result Card -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-body text-center py-5">
+                    {% if result.passed %}
+                    <div class="result-icon mb-4">
+                        <i class="fas fa-check-circle fa-5x text-success"></i>
+                    </div>
+                    <h2 class="card-title mb-2">Congratulations! 🎉</h2>
+                    <p class="text-success font-weight-bold">You have passed the quiz!</p>
+                    {% else %}
+                    <div class="result-icon mb-4">
+                        <i class="fas fa-times-circle fa-5x text-danger"></i>
+                    </div>
+                    <h2 class="card-title mb-2">Quiz Not Passed</h2>
+                    <p class="text-danger">You need to score {{ result.quiz.passing_score }}% to pass this quiz.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Score Details -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>Quiz Results</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Your Score</h6>
+                            <h3 class="{% if result.passed %}text-success{% else %}text-danger{% endif %}">
+                                {{ result.score }}/{{ result.total_marks }}
+                            </h3>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Percentage</h6>
+                            <h3 class="{% if result.passed %}text-success{% else %}text-danger{% endif %}">
+                                {{ result.percentage }}%
+                            </h3>
+                        </div>
+                    </div>
+
+                    <div class="progress mb-3" style="height: 25px;">
+                        <div class="progress-bar {% if result.passed %}bg-success{% else %}bg-danger{% endif %}" 
+                             role="progressbar" 
+                             style="width: {{ result.percentage }}%"
+                             aria-valuenow="{{ result.percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ result.percentage }}%
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Passing Score:</strong> {{ result.quiz.passing_score }}%</p>
+                            <p class="mb-1"><strong>Time Taken:</strong> 
+                                {% set minutes = result.time_taken // 60 %}
+                                {% set seconds = result.time_taken % 60 %}
+                                {{ minutes }}:{{ '%02d'|format(seconds) }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Quiz:</strong> {{ result.quiz.title }}</p>
+                            <p class="mb-1"><strong>Date:</strong> {{ result.completed_at.strftime('%d %B %Y %H:%M') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="/quizzes" class="btn btn-secondary btn-lg w-100">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Quizzes
+                    </a>
+                </div>
+                {% if result.passed %}
+                <div class="col-md-6">
+                    <a href="/api/generate-certificate/{{ result.id }}" class="btn btn-success btn-lg w-100">
+                        <i class="fas fa-certificate me-2"></i>Download Certificate
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-md-6">
+                    <a href="/quiz/{{ result.quiz.id }}" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-redo me-2"></i>Retake Quiz
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Tip Card -->
+            <div class="card bg-light border-0 mt-4">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="fas fa-lightbulb text-warning me-2"></i>Tips for Improvement</h6>
+                    <p class="card-text mb-0">
+                        Review the study materials related to this quiz topic and try again. 
+                        Each attempt helps you learn better!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
